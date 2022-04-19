@@ -13,7 +13,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 def main():
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     train_examples = get_examples("train")
-    train_dset = GSMDataset(tokenizer, train_examples)
+    train_dset = GSMDataset(tokenizer, train_examples) #->return(Tokenized tensor, attention mask)
 
     device = th.device("cuda")
     config = GPT2Config.from_pretrained("gpt2")
