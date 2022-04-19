@@ -6,6 +6,9 @@ from transformers import get_scheduler
 from tqdm.auto import tqdm
 from torch.utils.data import DataLoader
 
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 def main():
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
@@ -16,12 +19,14 @@ def main():
     config = GPT2Config.from_pretrained("gpt2")
     model = GPT2LMHeadModel.from_pretrained("gpt2", config=config)
     model.to(device)
+    # model = th.nn.DataParallel(model).to(device) #lack of GPU
     model.train()
 
-    train_loader = DataLoader(train_dset, batch_size=16, shuffle=True)
+    #original batch_size=16
+    train_loader = DataLoader(train_dset, batch_size=8, shuffle=True)
     optim = AdamW(model.parameters(), lr=1e-5)
 
-    num_epochs = 20
+    num_epochs = 2 #20
     num_training_steps = num_epochs * len(train_loader)
     lr_scheduler = get_scheduler(
         "linear",
