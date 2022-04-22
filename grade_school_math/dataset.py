@@ -74,12 +74,14 @@ class GSMDataset(th.utils.data.Dataset):
         mask = th.tensor(mask)
         return dict(input_ids=tokens, attention_mask=mask)
 
+
 # ============= BertDataset ==========
 class BertGSMDataset(th.utils.data.Dataset):
     def __init__(self, tokenizer, examples, loss_on_prefix=True):
         self.examples = examples
         self.qns = [ex["question"] for ex in self.examples]
-        self.ans = [ex["answer"] for ex in self.examples]
+        self.con = [ex["context"] for ex in self.examples]
+        self.ans = [ex["answers"] for ex in self.examples]
         self.qns = tokenizer(self.qns, padding=False)
         self.ans = tokenizer(self.ans, padding=False)
         self.loss_on_prefix = loss_on_prefix
