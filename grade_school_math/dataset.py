@@ -10,7 +10,7 @@ def read_jsonl(path: str):
 
 
 def get_examples(split):
-    path = os.path.join("/home/sangmin/kcc_proto/MATHdataset/grade-school-math/grade_school_math/data/", f"{split}.jsonl")
+    path = os.path.join("/home/sangmin/grade-school-math/grade_school_math/data", f"{split}.jsonl")
     examples = read_jsonl(path)
 
     for ex in examples:
@@ -77,21 +77,14 @@ class GSMDataset(th.utils.data.Dataset):
 
 # ============= BertDataset ==========
 class BertGSMDataset(th.utils.data.Dataset):
-    def __init__(self, tokenizer, examples, loss_on_prefix=True):
+    def __init__(self, tokenizer, examples):
         self.examples = examples
         self.qns = [ex["question"] for ex in self.examples]
         self.con = [ex["context"] for ex in self.examples]
         self.ans = [ex["answers"] for ex in self.examples]
         self.qns = tokenizer(self.qns, padding=False)
+        self.con = tokenizer(self.con, padding=False)
         self.ans = tokenizer(self.ans, padding=False)
-        self.loss_on_prefix = loss_on_prefix
-        self.max_len = max(
-            [
-                len(self.qns["input_ids"][i]) + len(self.ans["input_ids"][i])
-                for i in range(len(self.examples))
-            ]
-        )
-        print(f"Max tokens: {self.max_len}")
 
     def __len__(self):
         return len(self.examples)
